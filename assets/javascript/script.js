@@ -28,10 +28,38 @@ document.addEventListener('DOMContentLoaded', () => {
         errorbox.style.display = 'none';
         errorbox.innerText = '';
     }
+
+    const calculate = (a, operator, b) => {
+        switch (operator) {
+            case '+':
+                return a + b;
+            case '-':
+                return a - b;
+            case '*':
+                return a * b;
+            case '/':
+                if (b === 0) {
+                    return 'undefined';
+                }
+                return a / b;
+            default:
+                return null;
+        }
+    };
+    
+      
     const performCalc = () => {
         const errorMessage = 'Malformed expression';
         try {
-            const result = eval(display.value.replace(/÷/g, "/").replace(/×/g, "*"));
+            let expression = display.value.replace(/÷/g, '/').replace(/×/g, '*');
+            const parts = expression.split(/([+\-*/])/).filter(Boolean);
+            
+            let result = parseFloat(parts[0]);
+            for (let i = 1; i < parts.length; i += 2) {
+                let operator = parts[i];
+                let nextNumber = parseFloat(parts[i + 1]);
+                result = calculate(result, operator, nextNumber);
+            }
 
             if (result === undefined || result === null || isNaN(result)) {
                 playErrorSound();
